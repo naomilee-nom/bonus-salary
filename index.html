@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案營運優化與成本對照表</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f1f5f9;
+            padding: 20px;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        .header { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: white; padding: 35px; text-align: center; }
+        
+        .tabs { display: flex; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; color: #64748b; transition: 0.3s; }
+        .tab.active { color: #3b82f6; border-bottom: 3px solid #3b82f6; background: white; }
+        
+        .date-bar { background: #fff; padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 30px; align-items: center; flex-wrap: wrap; }
+        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; padding: 25px; }
+        .col { background: #f8fafc; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; }
+        .col-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 16px; box-sizing: border-box; transition: 0.2s; }
+        input:focus { outline: none; border-color: #3b82f6; ring: 2px rgba(59, 130, 246, 0.2); }
+        
+        .res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; padding: 0 25px 25px; }
+        .res-card { padding: 20px; border-radius: 18px; background: white; border: 1px solid #e2e8f0; text-align: center; transition: 0.3s; }
+        .val { font-size: 26px; font-weight: 800; margin-top: 5px; }
+        
+        /* Proposal Styles */
+        .proposal-section { padding: 30px; }
+        .benefit-box { background: #eff6ff; border: 2px dashed #3b82f6; border-radius: 20px; padding: 25px; margin-bottom: 30px; }
+        .rule-card { background: white; border-radius: 15px; border-left: 6px solid #10b981; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .tag-blue { background: #dbeafe; color: #1e40af; }
+        .tag-green { background: #dcfce7; color: #166534; }
+        .tag-orange { background: #ffedd5; color: #9a3412; }
+
+        .human-advice { margin: 25px; padding: 25px; background: #f0fdf4; border-radius: 20px; border: 1px solid #dcfce7; }
+        .red { color: #ef4444; }
+        .orange { color: #f59e0b; }
+        .green { color: #10b981; }
+
+        @media (max-width: 768px) { .date-bar { flex-direction: column; } .main-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div id="root" class="container"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [rd, setRd] = useState({ n: 10, salary: 50000, bonus: 30000 });
+            const [qa, setQa] = useState({ n: 6, salary: 50000 });
+            const [bugs, setBugs] = useState({ s1: 8, s2: 40, s3: 64, s4: 19 });
+            const [dates, setDates] = useState({ expected: "2026-03-27", actual: new Date().toISOString().split('T')[0] });
+
+            const getDays = () => {
+                const diff = Math.ceil((new Date(dates.actual) - new Date(dates.expected)) / (1000 * 60 * 60 * 24));
+                return diff > 0 ? diff : 0;
+            };
+            const days = getDays();
+            const dailyCost = ((rd.salary / 30) * rd.n) + ((qa.salary / 30) * qa.n);
+            const totalLoss = dailyCost * days;
+            const qaBugBonus = (bugs.s1 * 1000) + (bugs.s2 * 500) + (bugs.s3 * 200) + (bugs.s4 * 100);
+
+            // 提案計算邏輯
+            const rdBonusProposal = 10000;
+            const savedDayValue = dailyCost - rdBonusProposal;
+
+            return (
+                <div className="card">
+                    <div className="header">
+                        <h1 style={{margin: 0, fontSize: '28px'}}>🚀 專案營運優化與成本對照表</h1>
+                        <p style={{opacity: 0.8, marginTop: '8px', fontSize: '14px'}}>資深工程師 (Staff Engineer) 團隊治理提案</p>
+                    </div>
+
+                    <div className="tabs">
+                        <div className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>📊 成本現況監控</div>
+                        <div className={`tab ${activeTab === 'proposals' ? 'active' : ''}`} onClick={() => setActiveTab('proposals')}>💡 流程優化與獎勵提案</div>
+                    </div>
+
+                    {activeTab === 'dashboard' ? (
+                        <>
+                            <div className="date-bar">
+                                <div className="input-group" style={{margin:0}}>
+                                    <label>📅 預計結案日</label>
+                                    <input type="date" value={dates.expected} onChange={e => setDates({ ...dates, expected: e.target.value })} />
+                                </div>
+                                <div style={{fontSize: '20px', color: '#cbd5e1'}}>➜</div>
+                                <div className="input-group" style={{margin:0}}>
+                                    <label>🏁 實際/目前日期</label>
+                                    <input type="date" value={dates.actual} onChange={e => setDates({ ...dates, actual: e.target.value })} />
+                                </div>
+                                <div style={{background: '#f8fafc', padding: '10px 20px', borderRadius: '15px', border: '1px solid #e2e8f0'}}>
+                                    <div style={{fontSize: '12px', color: '#64748b'}}>目前已延遲</div>
+                                    <div style={{fontSize: '20px', fontWeight: 'bold', color: '#ef4444'}}>{days} 天</div>
+                                </div>
+                            </div>
+
+                            <div className="main-grid">
+                                <div className="col" style={{borderLeft: '5px solid #3b82f6'}}>
+                                    <div className="col-title" style={{color: '#1d4ed8'}}>💻 RD 研發團隊設定</div>
+                                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px'}}>
+                                        <div className="input-group"><label>團隊人數</label><input type="number" value={rd.n} onChange={e => setRd({ ...rd, n: e.target.value })} /></div>
+                                        <div className="input-group"><label>平均月薪</label><input type="number" value={rd.salary} onChange={e => setRd({ ...rd, salary: e.target.value })} /></div>
+                                    </div>
+                                    <div className="input-group">
+                                        <label>🎁 原定結案獎金 (預設單人)</label>
+                                        <input type="number" value={rd.bonus} onChange={e => setRd({ ...rd, bonus: e.target.value })} style={{background:'#eff6ff', borderColor:'#3b82f6'}} />
+                                    </div>
+                                </div>
+
+                                <div className="col" style={{borderLeft: '5px solid #10b981'}}>
+                                    <div className="col-title" style={{color: '#059669'}}>🔍 QA 與 Bug 統計</div>
+                                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'15px'}}>
+                                        <div className="input-group"><label>QA 人數</label><input type="number" value={qa.n} onChange={e => setQa({ ...qa, n: e.target.value })} /></div>
+                                        <div className="input-group"><label>QA 月薪</label><input type="number" value={qa.salary} onChange={e => setQa({ ...qa, salary: e.target.value })} /></div>
+                                    </div>
+                                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', gap:'8px'}}>
+                                        <div><label>S1</label><input type="number" value={bugs.s1} onChange={e => setBugs({ ...bugs, s1: parseInt(e.target.value)||0 })} /></div>
+                                        <div><label>S2</label><input type="number" value={bugs.s2} onChange={e => setBugs({ ...bugs, s2: parseInt(e.target.value)||0 })} /></div>
+                                        <div><label>S3</label><input type="number" value={bugs.s3} onChange={e => setBugs({ ...bugs, s3: parseInt(e.target.value)||0 })} /></div>
+                                        <div><label>S4</label><input type="number" value={bugs.s4} onChange={e => setBugs({ ...bugs, s4: parseInt(e.target.value)||0 })} /></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="res-grid">
+                                <div className="res-card">
+                                    <div style={{fontSize: '13px', color: '#64748b'}}>⌛ 每日團隊薪資支出 (RD+QA)</div>
+                                    <div className="val orange">${Math.round(dailyCost).toLocaleString()}</div>
+                                </div>
+                                <div className="res-card">
+                                    <div style={{fontSize: '13px', color: '#64748b'}}>📉 累計延遲薪資支出</div>
+                                    <div className="val red">${Math.round(totalLoss).toLocaleString()}</div>
+                                </div>
+                                <div className="res-card">
+                                    <div style={{fontSize: '13px', color: '#64748b'}}>💰 目前 QA 激勵獎金</div>
+                                    <div className="val green">${Math.round(qaBugBonus).toLocaleString()}</div>
+                                </div>
+                            </div>
+
+                            <div className="human-advice">
+                                <h3 style={{margin: '0 0 10px 0', color: '#065f46', fontSize: '18px'}}>💡 老闆觀點：成本止損</h3>
+                                <div style={{fontSize: '15px', color: '#064e3b'}}>
+                                    目前延遲已導致公司多支出 <b>${Math.round(totalLoss).toLocaleString()}</b>。
+                                    每提早一天結案，即可直接為公司省下 <b>${Math.round(dailyCost).toLocaleString()}</b> 的人力成本。
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="proposal-section">
+                            <div className="benefit-box">
+                                <div className="tag tag-blue">效益分析</div>
+                                <h2 style={{margin: '0 0 10px 0', color: '#1e40af'}}>🎯 準時結案獎金提案 (RD $10,000)</h2>
+                                <p style={{fontSize: '16px', color: '#334155'}}>
+                                    若 QA 完成測試且能準時結案，即使仍有殘留 bug，建議發放 RD <b>$10,000</b> 獎金。<br/>
+                                    <b>效益對照：</b> 獎金支出 $10,000 vs. 每日延遲成本 ${Math.round(dailyCost).toLocaleString()}。<br/>
+                                    <span style={{fontWeight: 'bold', color: '#059669'}}>
+                                        🚀 結論：只要能節省 1 天延遲，公司立即淨賺 ${Math.round(dailyCost - 10000).toLocaleString()}。
+                                    </span>
+                                </p>
+                            </div>
+
+                            <div className="rule-card" style={{borderLeftColor: '#f59e0b'}}>
+                                <div className="tag tag-orange">人力與時程估計</div>
+                                <h3>📊 雙人估時與動態調整</h3>
+                                <ul style={{paddingLeft: '20px'}}>
+                                    <li><b>精準估時：</b> 拒絕單一 RD 估時，應由 2 位以上 RD 針對功能估計，並取平均值作為標準。</li>
+                                    <li><b>壓縮補償：</b> 若因業務需求壓縮 RD 開發時間，結案獎金應維持「原估時所需成本」之比例計算，不得扣除。</li>
+                                    <li><b>成長監控：</b> 新進人員或重點觀察對象，開發與協作時間需以 <b>1.5x</b> 計算。</li>
+                                    <li><b>Mentor 激勵：</b> 新人之獎金 <b>25%</b> 應提撥給負責帶領的前後端 Mentor。</li>
+                                </ul>
+                            </div>
+
+                            <div className="rule-card" style={{borderLeftColor: '#3b82f6'}}>
+                                <div className="tag tag-blue">開發品質標準 (SOP)</div>
+                                <h3>⚙️ 強制性流程規範</h3>
+                                <ul style={{paddingLeft: '20px'}}>
+                                    <li><b>Spec Confirm：</b> 所有 RD 必須參與。會議中每人需提出 <b>1~3 個</b> 技術或邏輯問題。</li>
+                                    <li><b>緩衝設計：</b> 甘特圖中必須包含至少 <b>0.5 天</b> 的非重疊時間進行最終確認。</li>
+                                    <li><b>品質保證：</b> Unit Test 與 PR 審核需各預留至少 <b>1 天</b>，且兩者時程不可重疊，確保代碼品質。</li>
+                                </ul>
+                            </div>
+
+                            <div className="human-advice">
+                                <h3 style={{margin: '0 0 10px 0', color: '#065f46', fontSize: '18px'}}>💡 Staff Engineer 的建議</h3>
+                                <div style={{fontSize: '15px', color: '#064e3b'}}>
+                                    「這套提案的核心在於 **用小額獎金終結高額薪資燃燒**，同時透過 SOP 確保新人成長與代碼品質。
+                                    當流程標準化後，我們能更準確地預測結案時間，降低不可控的研發風險。」
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
