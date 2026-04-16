@@ -112,10 +112,7 @@ const TimelineComparison = ({ dailyCost }) => {
                 </div>
               </div>
               
-              <div className="p-4 bg-stone-50 border border-stone-200 flex items-center gap-3">
-                <Brain className="w-5 h-5 text-slate-900 shrink-0" />
-                <p className="text-slate-900 font-bold leading-tight">充足的工期，是培養積極研發心態與高品質產出的土壤。</p>
-              </div>
+             
             </div>
           </div>
         </div>
