@@ -38,7 +38,7 @@ export default function App() {
         <div className="bg-white border border-stone-200 shadow-sm overflow-hidden">
           <Header 
             title="研發效能與制度影響分析報告" 
-            subtitle="資深前端工程師團隊治理提案" 
+            subtitle="資深前端工程師提案" 
           />
           
           <Tabs 

@@ -147,7 +147,7 @@ export const Proposals = ({ dailyCost }) => (
       <div className="bg-stone-900 p-6 flex items-center justify-between">
         <div className="flex items-center gap-3 text-stone-100">
           <Target className="w-6 h-6 text-stone-100" />
-          <h2 className="text-xl font-black uppercase tracking-tighter text-stone-100">階層式團體獎金提案 (Base: $6,000)</h2>
+          <h2 className="text-xl font-black uppercase tracking-tighter text-stone-100">階層式團體獎金提案 ( 舉例團體獎金 : $6,000 )</h2>
         </div>
         <div className="text-base font-bold text-stone-400 uppercase tracking-[0.2em]">Group Incentive Model</div>
       </div>

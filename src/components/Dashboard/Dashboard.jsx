@@ -76,7 +76,7 @@ export const Dashboard = ({ state, handlers }) => {
   return (
     <div className="bg-white">
       <div className="bg-stone-50 p-10 border-b border-stone-200">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-center mb-10">
            <InputGroup label="開發啟動日期">
              <input type="date" className="w-full bg-white border border-stone-200 p-2 text-base font-bold text-slate-900 outline-none focus:border-slate-900" 
                value={dates.start} onChange={e => setDates({ ...dates, start: e.target.value })} />
@@ -87,15 +87,16 @@ export const Dashboard = ({ state, handlers }) => {
            <InputGroup label="原定結案日期">
              <input type="date" className="w-full bg-white border border-stone-200 p-2 text-base font-bold text-rose-600 outline-none focus:border-rose-600" 
                value={dates.expected} onChange={e => setDates({ ...dates, expected: e.target.value })} />
-           </InputGroup>
+           </InputGroup> 
+            <InputGroup label="當前狀態統計日期">
+               <input type="date" className="w-full bg-white border border-stone-200 p-2 text-base font-bold text-slate-900 outline-none focus:border-slate-900" 
+                 value={dates.actual} onChange={e => setDates({ ...dates, actual: e.target.value })} />
+             </InputGroup>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-8">
            <div className="md:col-start-2">
-             <InputGroup label="當前狀態統計日期">
-               <input type="date" className="w-full bg-white border border-stone-200 p-2 text-base font-bold text-slate-900 outline-none focus:border-slate-900" 
-                 value={dates.actual} onChange={e => setDates({ ...dates, actual: e.target.value })} />
-             </InputGroup>
+           
            </div>
         </div>
         
